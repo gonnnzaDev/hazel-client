@@ -36,7 +36,7 @@ function waitForHealth(timeoutMs = 90000) {
   let backend = null;
   if (!skipBackend) {
     console.log(`[dev] starting backend in ${backendDir}`);
-    backend = run('bash', ['-lc', `cd "${backendDir}" && make up && make migrate && make api`]);
+    backend = run('bash', ['-lc', `cd "${backendDir}" && (make up || true) && make migrate && make api`]);
     backend.on('exit', (code) => {
       if (code !== null && code !== 0) console.error(`[dev] backend exited with ${code}`);
     });
