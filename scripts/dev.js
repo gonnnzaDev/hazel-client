@@ -46,7 +46,7 @@ function waitForHealth(timeoutMs = 90000) {
     console.log(`[dev] starting backend in ${backendDir}`);
     await runAndWait('make', ['up'], { cwd: backendDir });
     await runAndWait('uv', ['run', 'alembic', 'upgrade', 'head'], { cwd: backendDir });
-    backend = run('uv', ['run', 'python', '-m', 'core', 'node', '--reload'], { cwd: backendDir });
+    backend = run('uv', ['run', 'python', '-m', 'core', '--reload', 'node'], { cwd: backendDir });
     backend.on('exit', (code) => {
       if (code !== null && code !== 0) console.error(`[dev] backend exited with ${code}`);
     });
