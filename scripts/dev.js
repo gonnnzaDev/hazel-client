@@ -36,7 +36,7 @@ function waitForHealth(timeoutMs = 90000) {
   let backend = null;
   if (!skipBackend) {
     console.log(`[dev] starting backend in ${backendDir}`);
-    backend = run('bash', ['-lc', `cd "${backendDir}" && (make up || true) && make migrate && make api`]);
+    backend = run('bash', ['-lc', `cd "${backendDir}" && (make up || true) && (uv run alembic upgrade head || true); uv run python -m core node --reload`]);
     backend.on('exit', (code) => {
       if (code !== null && code !== 0) console.error(`[dev] backend exited with ${code}`);
     });
