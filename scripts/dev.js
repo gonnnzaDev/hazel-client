@@ -13,7 +13,15 @@ const skipBackend = process.argv.includes('--no-backend');
 const mobile = process.argv.includes('--mobile');
 
 function run(cmd, args, opts = {}) {
-  return spawn(cmd, args, { stdio: 'inherit', shell: true, ...opts });
+  return spawn(cmd, args, { stdio: 'inherit', ...opts });
+}
+
+function runAndWait(cmd, args, opts = {}) {
+  return new Promise((resolve) => {
+    const p = run(cmd, args, opts);
+    p.on('exit', (code) => resolve(code));
+    p.on('error', (err) => { console.error(`[dev] ${cmd} error:`, err.message); resolve(1); });
+  });
 }
 
 function waitForHealth(timeoutMs = 90000) {
@@ -36,7 +44,9 @@ function waitForHealth(timeoutMs = 90000) {
   let backend = null;
   if (!skipBackend) {
     console.log(`[dev] starting backend in ${backendDir}`);
-    backend = run('bash', ['-lc', `cd "${backendDir}" && (make up || true) && (uv run alembic upgrade head || true); uv run python -m core node --reload`]);
+    await runAndWait('make', ['up'], { cwd: backendDir });
+    await runAndWait('uv', ['run', 'alembic', 'upgrade', 'head'], { cwd: backendDir });
+    backend = run('uv', ['run', 'python', '-m', 'core', 'node', '--reload'], { cwd: backendDir });
     backend.on('exit', (code) => {
       if (code !== null && code !== 0) console.error(`[dev] backend exited with ${code}`);
     });
