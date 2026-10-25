@@ -15,10 +15,15 @@ Stack: React Native + TypeScript (Expo).
 
 ```bash
 npm install
-npm start          # Expo Go / dev client
-npm run web        # navegador
-npm run android    # emulador/dispositivo Android
+npm run dev          # levanta el backend Hazel + cliente web (auto)
+npm run dev:mobile   # levanta el backend + Expo Go (mobile)
+npm run web          # solo cliente web (backend ya corriendo)
+npm run dev:no-backend  # solo cliente (sin backend)
 ```
+
+El script `scripts/dev.js` arranca automáticamente el backend en `../hazel`
+(Postgres + Kafka + API, puerto 7272) y espera a `/health` antes de lanzar el
+cliente. Override con `HAZEL_DIR`, `HAZEL_HOST`, `HAZEL_PORT`, `WEB_PORT`.
 
 Configura host/puerto en la pantalla "connect" (por defecto `127.0.0.1:7272`).
 
